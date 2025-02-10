@@ -333,7 +333,7 @@ def plot_bikeability_map(edges, zurich_boundary, bi_col, save_dir, crs=2056):
     fig, ax = plt.subplots(figsize=(6, 6))
     edges_plot.plot(ax=ax, column=bi_col, cmap="RdYlBu", linewidth=1.2, alpha=0.9, norm=norm, legend=False)
     zurich_boundary.plot(ax=ax, edgecolor='black', lw=1.8, linestyle="dashed", facecolor='none')
-    #ctx.add_basemap(ax, source=ctx.providers.CartoDB.Positron, zoom=12, crs=crs)
+    ctx.add_basemap(ax, source=ctx.providers.CartoDB.Positron, zoom=12, crs=crs)
     sm = plt.cm.ScalarMappable(cmap="RdYlBu", norm=norm)
     sm._A = []
     cbar_ax = fig.add_axes([ax.get_position().x0, ax.get_position().y0 - 0.05, ax.get_position().width, 0.02])
