@@ -162,26 +162,28 @@ def run_anp_workflow(edges_df, spatial_bounds, kg_endpoint, output_dir):
         'DetourFactor'
     ]
     metrics = filter_metrics(metrics, occurrence=2, remove_columns=remove_columns)
-    logging.info("Metric loaded")
+    logging.info("Metrics from KG instance loaded.")
 
     # Status Quo bikeability
     criteria_keys = sorted(metrics['criteria_type'].unique())
     metric_keys = sorted(metrics['metric_type'].unique())
 
+    logging.info("Initiating ANP supermatrix construction.")
     edge_rankings, limit_matrix_df = get_edge_ranking(edges_df, metrics)
     edges_df["BI"] = edge_rankings
-    logging.info("ANP applied")
+    logging.info("Limit matrix created.")
 
     # Plotting
     plot_priority_weights(limit_matrix_df, criteria_keys, metric_keys, output_dir)
     plot_bikeability_map(edges_df, spatial_bounds, "BI", output_dir)
 
     # Sensitivity Analysis
+    logging.info("Starting sensitivity analysis permutations. It might take a couple minutes.")
     rankings_df1, edges_df = permutate_dropped_elements(metrics, edges_df, 'metric_type')
     rankings_df2, edges_df = permutate_dropped_elements(metrics, edges_df, 'criteria_type')
 
     plot_permutations(edges_df["BI"], rankings_df1, rankings_df2, output_dir)
-    logging.info("Analysis results plotted")
+    logging.info("Analysis results stored in the output directory.")
 
 
 def main():
@@ -196,6 +198,7 @@ def main():
     edges['index'] = edges.index
     buffer = calculate_buffer(edges.copy(), int(config.get('constants', 'buffer')))
 
+    logging.info("Loading contextual data. It might take a couple of minutes.")
     zurich_boundary = load_location(config.get('paths', 'zurich_boundary_path'))
     zurich_district = load_location(config.get('paths', 'zurich_districts'))[:1]
     speed_limits = load_speed_limits(config.get('paths', 'speed_limit_path'))
@@ -217,6 +220,7 @@ def main():
     # cache sindex
     _, _, _ = trees.sindex, buffer.sindex, edges.sindex
 
+    logging.info("Enriching edge network with contextual data. It might take a couple of minutes.")
     edges = enrich_edge_df(edges, buffer, speed_limits, traffic_volume, green_spaces, air_poll,
                            surface, landuse, population, trees, pt_stops, slope, b_parking, pois, bike_speed)
     # Limit to Oerlikon area
