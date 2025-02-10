@@ -39,7 +39,7 @@ This repository provides a framework for evaluating bike networks by fusing Know
       └── data_submission/        # Contains input or generated output data
          ├── input/               # Intermediate data necessary for full workflow reproducibility
            ├── metrics.nq         # N-quads to be stored in a graph database.
-           ├── ...                # rest of the contextual data.
+           ├── ...                # ... rest of the contextual data.
            ├── zurich_kreise/     # Dataset with Zurich's districts.
          ├── output/              # All generated data from this workflow is stored here
       ```
@@ -48,7 +48,7 @@ This repository provides a framework for evaluating bike networks by fusing Know
 
 ## Data and Reproducibility:
 
-   - Input data specific to this workflow can be [downloaded](https://doi.org/10.5281/zenodo.14839760) and should be placed in the `data_submission/input/` folder to match the directory structure above.
+   - Input data specific to this workflow can be [downloaded](https://doi.org/10.5281/zenodo.14839760) and should be placed in the `data_submission/input/` folder to match the directory structure above. In addition, create `output` folder inside `data_submission/` if it is not there. 
    - The input data was generated using methodologies described in: metrics [[1]](#references) and road network [[2,3]](#references) and as part of the _blinded for peer review_ project. Contextual data was downloaded from [Zurich City Data Registry](https://data.stadt-zuerich.ch/) together with meta-information. 
    - The full workflow has been tested on Windows operating system, Lenovo ThinkPad X1 (12th Gen Intel(R) Core(TM) i7-1260P 2.10 GHz) and took up to 10 min.
 
@@ -60,12 +60,12 @@ This repository provides a framework for evaluating bike networks by fusing Know
 - Start Blazegraph by navigating to the root directory and running the following in CLI:
 
   ```
-  java -server -Xmx16g -jar blazegraph.jar
+  java -server -Xmx4g -jar blazegraph.jar
   ```
   
 - Check that the **port** in the running local Blazegraph instance URL, e.g., `http://127.0.0.1:9999/blazegraph/` matches the port of the `kg` key in the `config.ini` file.
 - You can now open the local KG URL in a browser. 
-  - Under **NAMESPACES** tab create a new namespace called, e.g., `anp`, with Mode set to `quads`. Note that the namespace's name needs to match with the name in the `kg` key that appears between `/namespace` and `/sparql`. 
+  - Under **NAMESPACES** tab create a new namespace called `anp`, with Mode set to `quads`. Set the anp namespace to `in Use`. Note that the namespace's name needs to match with the name in the `kg` key.
   - Under the **UPDATE** tab choose the `metrics.nq` file from the `input/` directory as Type `RDF data` and Format set to `N-Quads` and clicking `Update`. 
 
 ## ANP workflow:
