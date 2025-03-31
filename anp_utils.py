@@ -309,7 +309,7 @@ def save_plot(fig, directory, filename):
 
 
 def plot_priority_weights(df, criteria_keys, metric_keys, save_dir):
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
 
     for ax, data, title, color in zip(
             axes,
@@ -331,14 +331,19 @@ def plot_bikeability_map(edges, zurich_boundary, bi_col, save_dir, crs=2056):
 
     norm = mcolors.Normalize(vmin=edges_plot[bi_col].min(), vmax=edges_plot[bi_col].max())
     fig, ax = plt.subplots(figsize=(6, 6))
-    edges_plot.plot(ax=ax, column=bi_col, cmap="RdYlBu", linewidth=1.2, alpha=0.9, norm=norm, legend=False)
-    zurich_boundary.plot(ax=ax, edgecolor='black', lw=1.8, linestyle="dashed", facecolor='none')
+    edges_plot.plot(ax=ax, column=bi_col, cmap="coolwarm_r", linewidth=1.2, alpha=0.9, norm=norm, legend=False)
+    zurich_boundary.plot(ax=ax, edgecolor='black', lw=1, linestyle="--", facecolor='none')
     ctx.add_basemap(ax, source=ctx.providers.CartoDB.Positron, zoom=12, crs=crs)
-    sm = plt.cm.ScalarMappable(cmap="RdYlBu", norm=norm)
+    sm = plt.cm.ScalarMappable(cmap="coolwarm_r", norm=norm)
     sm._A = []
     cbar_ax = fig.add_axes([ax.get_position().x0, ax.get_position().y0 - 0.05, ax.get_position().width, 0.02])
     cbar = plt.colorbar(sm, cax=cbar_ax, orientation="horizontal")
-    cbar.set_label(f"ANP {bi_col}", fontsize=12)
+    cbar.set_label("ANP-based Bikeability Index", fontsize=12)
+
+    # Add text labels above the color bar
+    cbar_ax.text(0.01, 1.6, "Less Bikeable", ha='left', va='center', fontsize=10, transform=cbar_ax.transAxes)
+    cbar_ax.text(0.99, 1.6, "More Bikeable", ha='right', va='center', fontsize=10, transform=cbar_ax.transAxes)
+
     ax.set_xticks([])
     ax.set_yticks([])
     ax.set_frame_on(True)
@@ -348,29 +353,26 @@ def plot_bikeability_map(edges, zurich_boundary, bi_col, save_dir, crs=2056):
 
 
 def plot_permutations(original_bikeability, rankings_df1, rankings_df2, save_dir):
-    fig, axes = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
+    fig, axes = plt.subplots(2, 1, figsize=(12, 6), sharex=True)
 
     for ax, rankings_df, title in zip(
             axes,
-
             [rankings_df1, rankings_df2],
             ['Metric Type', 'Criteria Type']):
 
-        ax.plot([0, 1], [0, 1], transform=ax.transAxes, linestyle='--', color='black', zorder=0)
-        ax.errorbar(original_bikeability, rankings_df.mean(axis=1),
-                    yerr=rankings_df.std(axis=1) * 2, fmt='o', color="#FED687", label='Mean BI', zorder=1)
-        ax.scatter(original_bikeability, rankings_df.max(axis=1), marker='^', color='#3950A1', label='Max BI', zorder=2)
-        ax.scatter(original_bikeability, rankings_df.min(axis=1), marker='v', color='#BB1526', label='Min BI', zorder=3)
+        ax.plot([0, 1], [0, 1], transform=ax.transAxes, linestyle='--', color='darkgrey', zorder=0)
+        ax.errorbar(original_bikeability, rankings_df.mean(axis=1), yerr=rankings_df.std(axis=1) * 2, fmt='o', color="#FED687", label='Mean bikeability value', zorder=2)
+        ax.scatter(original_bikeability, rankings_df.max(axis=1), marker='^', color='#3950A1', label='Max bikeability value', zorder=3)
+        ax.scatter(original_bikeability, rankings_df.min(axis=1), marker='v', color='#BB1526', label='Min bikeability value', zorder=1)
 
         ax.set_xlim(0, rankings_df.max().max() * 1.15)
         ax.set_ylim(0, rankings_df.max().max() * 1.15)
-        ax.set_title(title, fontsize=18)
+        ax.set_title(title, fontsize=14)
         ax.tick_params(axis='both', which='major', labelsize=14)
         ax.legend(fontsize=14)
 
-    fig.text(0.00, 0.5, 'Permuted Bikeability Values', va='center', ha='center', rotation='vertical', fontsize=16,
-             transform=fig.transFigure)
-    axes[-1].set_xlabel('Original Bikeability Values', fontsize=16)
+    fig.text(0.00, 0.5, 'Permuted Bikeability Values', va='center', ha='center', rotation='vertical', fontsize=14, transform=fig.transFigure)
+    axes[-1].set_xlabel('Original Bikeability Values', fontsize=14)
     plt.tight_layout()
     save_plot(fig, save_dir, "permutations.png")
 

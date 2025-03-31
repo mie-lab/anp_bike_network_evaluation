@@ -1,4 +1,5 @@
 import networkx as nx
+from pandas import DataFrame
 from shapely.geometry import Point
 import numpy as np
 import geopandas as gpd
@@ -103,7 +104,7 @@ def merge_spatial_share(
         divider_col: str,
         percent: bool = False,
         merge_col: str = "index",
-) -> gpd.GeoDataFrame:
+) -> DataFrame:
 
     overlaps = gpd.overlay(buffer, spatial_data, how="intersection", keep_geom_type=False)
 
